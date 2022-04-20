@@ -2,7 +2,7 @@ package source
 
 import (
 	"encoding/csv"
-	"log"
+	"fmt"
 	"os"
 )
 
@@ -17,7 +17,7 @@ func NewCsvFile(path string) *CsvFile {
 func (receiver CsvFile) Read() [][]string {
 	f, err := os.Open(receiver.path)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err.Error())
 	}
 
 	defer f.Close()
@@ -25,7 +25,7 @@ func (receiver CsvFile) Read() [][]string {
 	csvReader := csv.NewReader(f)
 	data, err := csvReader.ReadAll()
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err.Error())
 	}
 	return data
 }
@@ -35,7 +35,7 @@ func (receiver CsvFile) Write(data [][]string) {
 	defer destination.Close()
 
 	if err != nil {
-		log.Fatalln("Failed to open file", err)
+		fmt.Println("Failed to open file")
 	}
 
 	writer := csv.NewWriter(destination)
@@ -44,7 +44,7 @@ func (receiver CsvFile) Write(data [][]string) {
 	for _, line := range data {
 		err := writer.Write(line)
 		if err != nil {
-			log.Fatalln("Error writing line to file", err)
+			fmt.Println("Error writing line to file")
 		}
 	}
 }
