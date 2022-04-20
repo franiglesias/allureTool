@@ -2,8 +2,8 @@ package main
 
 import (
 	. "allureTool/config"
-	. "allureTool/reader"
 	. "allureTool/report"
+	. "allureTool/source"
 	"io/ioutil"
 	"log"
 )
