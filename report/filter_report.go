@@ -2,8 +2,8 @@ package report
 
 import "strings"
 
-func FilterReport(report Report, filters []string) Report {
-	filtered := EmptyReport()
+func (report Report) FilterWith(filters []string) Report {
+	filtered := MakeEmptyReport()
 
 	for _, test := range report.Tests {
 		for _, filter := range filters {
@@ -12,7 +12,6 @@ func FilterReport(report Report, filters []string) Report {
 			}
 		}
 	}
-
 	return filtered
 }
 

@@ -8,7 +8,7 @@ import (
 func TestBuildReport(t *testing.T) {
 	t.Run("Converts raw data into a report", func(t *testing.T) {
 		want := expectedTests()
-		got := EmptyReport().BuildWith(rawData())
+		got := MakeEmptyReport().BuildWith(rawData())
 
 		if len(got.Tests) != 3 {
 			t.Errorf("Got %d lines instead of %d", len(got.Tests), 3)
@@ -46,7 +46,7 @@ func TestBuildReport(t *testing.T) {
 			"US-454",
 		}
 
-		filtered := FilterReport(report, filters)
+		filtered := report.FilterWith(filters)
 
 		if !strings.HasPrefix(filtered.Tests[0].epic, "US-454") {
 			t.Errorf("This line should not be here: %s, expected: %s", filtered.Tests[0].epic, "US-454")
@@ -59,7 +59,7 @@ func TestBuildReport(t *testing.T) {
 			"US-35",
 		}
 
-		filtered := FilterReport(report, filters)
+		filtered := report.FilterWith(filters)
 
 		if !strings.HasPrefix(filtered.Tests[0].feature, "US-35") {
 			t.Errorf("This line should not be here: %s, expected: %s", filtered.Tests[0].feature, "US-35")
@@ -72,7 +72,7 @@ func TestBuildReport(t *testing.T) {
 			"US-435",
 		}
 
-		filtered := FilterReport(report, filters)
+		filtered := report.FilterWith(filters)
 
 		if !strings.HasPrefix(filtered.Tests[0].story, "US-435") {
 			t.Errorf("This line should not be here: %s, expected: %s", filtered.Tests[0].story, "US-435")

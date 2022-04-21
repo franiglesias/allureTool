@@ -23,7 +23,7 @@ type Report struct {
 	skipHeader bool
 }
 
-func EmptyReport() Report {
+func MakeEmptyReport() Report {
 	return Report{Tests: []Test{}, skipHeader: true}
 }
 
@@ -36,7 +36,7 @@ func (report Report) AddTest(test Test) Report {
 }
 
 func (report Report) BuildWith(raw [][]string) Report {
-	filled := EmptyReport()
+	filled := MakeEmptyReport()
 
 	for _, row := range raw {
 		if row[0] == "Epic" && report.skipHeader {

@@ -13,21 +13,20 @@ func main() {
 
 	NewCsvFile(c.OutputFile()).
 		Write(
-			FilterReport(
-				EmptyReport().BuildWith(aggregatedDataIn(c.PathToReports())),
-				usingFiltersIn(c.FiltersFile()),
-			).ToRaw(),
+			MakeEmptyReport().
+				BuildWith(aggregatedDataIn(c.PathToReports())).
+				FilterWith(filtersIn(c.FiltersFile())).
+				ToRaw(),
 		)
 }
 
 func aggregatedDataIn(folder string) [][]string {
 	files := filesInDir(folder)
-	var raw [][]string
+	var aggregated [][]string
 	for _, file := range files {
-		rawContents := NewCsvFile(folder + file).Read()
-		raw = append(raw, rawContents...)
+		aggregated = append(aggregated, NewCsvFile(folder+file).Read()...)
 	}
-	return raw
+	return aggregated
 }
 
 func filesInDir(dir string) []string {
@@ -44,7 +43,7 @@ func filesInDir(dir string) []string {
 	return fPaths
 }
 
-func usingFiltersIn(filtersFile string) []string {
+func filtersIn(filtersFile string) []string {
 	var flat []string
 	for _, line := range NewCsvFile(filtersFile).Read() {
 		flat = append(flat, line[0])

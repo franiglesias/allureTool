@@ -15,19 +15,18 @@ type Config struct {
 }
 
 func GetConfig() Config {
-	outputFile := flag.String("output", "output.csv", "File to generate results report")
-	reports := flag.String("source", "allure", "Folder where report files are stored")
+	output := flag.String("output", "output.csv", "File to generate results report")
+	source := flag.String("source", "allure", "Folder where report files are stored")
 	filters := flag.String("filters", "filters.csv", "List of labels we want to find")
 	baseDir := flag.String("base", "./data/", "Base folder for working")
 	flag.Parse()
 
-	conf := Config{
-		output:  *outputFile,
-		reports: *reports,
+	return Config{
+		output:  *output,
+		reports: *source,
 		baseDir: strings.TrimSuffix(*baseDir, string(os.PathSeparator)),
 		filters: *filters,
 	}
-	return conf
 }
 
 func (c Config) PathToReports() string {
