@@ -7,7 +7,7 @@ import (
 
 func TestFileReader(t *testing.T) {
 
-	const csvFile = "../data/example.csv"
+	const csvFile = "example.csv"
 
 	cleanExampleFile(t, csvFile)
 
@@ -19,6 +19,8 @@ func TestFileReader(t *testing.T) {
 
 		failIfSomeCellDiverge(t, want, got)
 	})
+
+	cleanExampleFile(t, csvFile)
 }
 
 func cleanExampleFile(t *testing.T, csvFile string) {
