@@ -26,7 +26,7 @@ func TestLoadSecretConfigFromDotEnv(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Configurations doen't match")
+		t.Errorf("conf got %+v, want %+v", got, want)
 	}
 
 	clean("./.test.env")
@@ -51,7 +51,7 @@ func TestLoadConfigFromConfigFile(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Configurations doen't match")
+		t.Errorf("conf got %+v, want %+v", got, want)
 	}
 
 	clean("./config.yml")
@@ -78,12 +78,51 @@ func TestLoadAllConfiguration(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("Configurations doen't match")
+		t.Errorf("conf got %+v, want %+v", got, want)
 	}
 
 	clean("./config.yml")
 	clean("./.test.env")
+}
 
+func TestOverrideConfigurationWithCLIOptions(t *testing.T) {
+	c := Config{
+		output:   "output.csv",
+		reports:  "allure",
+		baseDir:  "./data",
+		filters:  "filters.csv",
+		baseUrl:  "",
+		server:   "",
+		password: "",
+		username: "",
+	}
+
+	args := []string{
+		"-output",
+		"custom.csv",
+		"-source",
+		"custom",
+		"-base",
+		"./custom",
+		"-filters",
+		"custom-filters.csv",
+	}
+	got, _ := c.LoadFlags("prog", args)
+
+	want := Config{
+		output:   "custom.csv",
+		reports:  "custom",
+		baseDir:  "./custom",
+		filters:  "custom-filters.csv",
+		baseUrl:  "",
+		server:   "",
+		password: "",
+		username: "",
+	}
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("conf got \n%+v\n, want \n%+v", got, want)
+	}
 }
 
 func clean(name string) {

@@ -90,3 +90,21 @@ func (c Config) LoadConf(confFile string) (Config, error) {
 
 	return n, nil
 }
+
+func (c Config) LoadFlags(program string, args []string) (Config, error) {
+	f := flag.NewFlagSet(program, flag.ContinueOnError)
+
+	n := c
+	f.StringVar(&n.output, "output", "output.csv", "File to generate results report")
+	f.StringVar(&n.reports, "source", "allure", "Folder where report files are stored")
+	f.StringVar(&n.filters, "filters", "filters.csv", "List of labels we want to find")
+	f.StringVar(&n.baseDir, "base", "./data/", "Base folder for working")
+
+	err := f.Parse(args)
+
+	if err != nil {
+		return n, err
+	}
+
+	return n, nil
+}
