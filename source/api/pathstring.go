@@ -31,3 +31,13 @@ func (p PathString) WithSchema() PathString {
 
 	return p
 }
+
+func (p PathString) WithoutSlashes() PathString {
+	s := p.WithoutTrailingSlash()
+
+	if strings.HasPrefix(s.toString(), "/") {
+		return PathString(strings.TrimPrefix(s.toString(), "/"))
+	}
+
+	return s
+}

@@ -16,8 +16,9 @@ func TestApiClientUriShould(t *testing.T) {
 		want   PathString
 	}{
 		{name: "All fine", base: "https://allure.com/", server: "server", want: "https://allure.com/server"},
-		{name: "Lack of trailing backslash", base: "https://allure.com", server: "server", want: "https://allure.com/server"},
-		{name: "Server comes with backslash", base: "https://allure.com", server: "server/", want: "https://allure.com/server"},
+		{name: "Lack of trailing slash", base: "https://allure.com", server: "server", want: "https://allure.com/server"},
+		{name: "Server with root slash", base: "https://allure.com", server: "/server", want: "https://allure.com/server"},
+		{name: "Server comes with slash", base: "https://allure.com", server: "server/", want: "https://allure.com/server"},
 		{name: "Schema defaults to https", base: "allure.com", server: "server", want: "https://allure.com/server"},
 		{name: "Not secure http is allowed", base: "http://allure.com", server: "server", want: "http://allure.com/server"},
 	}

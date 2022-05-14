@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
@@ -12,11 +13,11 @@ import (
 type Client struct {
 	BaseUrl     PathString
 	Server      PathString
-	credentials Credentials
+	Credentials Credentials
 }
 
 func (api Client) Uri() PathString {
-	return api.BaseUrl.WithSchema().WithTrailingSlash() + api.Server.WithoutTrailingSlash()
+	return api.BaseUrl.WithSchema().WithTrailingSlash() + api.Server.WithoutSlashes()
 }
 
 func (api Client) Endpoint(endpoint string) string {
@@ -25,19 +26,21 @@ func (api Client) Endpoint(endpoint string) string {
 
 func (api Client) Login() (*http.Cookie, error) {
 
-	jsonReq, err := json.Marshal(api.credentials)
+	jsonReq, err := json.Marshal(api.Credentials)
 	if err != nil {
 		return nil, err
 	}
-	request, _ := http.NewRequest(
-		http.MethodPost,
+	client := &http.Client{}
+
+	response, e := client.Post(
 		api.Endpoint("login"),
+		"application/json",
 		bytes.NewBuffer(jsonReq),
 	)
 
-	client := &http.Client{}
-
-	response, _ := client.Do(request)
+	if e != nil {
+		fmt.Errorf("Something happended")
+	}
 	defer response.Body.Close()
 
 	if response.StatusCode != 200 {
