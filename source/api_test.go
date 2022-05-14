@@ -11,15 +11,6 @@ import (
 	"testing"
 )
 
-//func (p Project) Download() {
-//	response, _ := p.export.Get()
-//
-//	temporal := "/tmp/"
-//	writeZipFile(response, temporal+p.name+".zip")
-//	_ = unzipSource(p.name, temporal+p.name+".zip", "./../data/allure", "/tmp")
-//	_ = os.Remove(temporal + p.name + ".zip")
-//}
-
 func TestApiGetProject(t *testing.T) {
 	projects := []string{
 		"backend",
