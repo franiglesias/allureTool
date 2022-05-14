@@ -16,7 +16,7 @@ type Client struct {
 }
 
 func (api Client) Uri() PathString {
-	return api.BaseUrl.WithSchema().WithBackslash() + api.Server.WithoutBackslash()
+	return api.BaseUrl.WithSchema().WithTrailingSlash() + api.Server.WithoutTrailingSlash()
 }
 
 func (api Client) Endpoint(endpoint string) string {

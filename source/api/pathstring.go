@@ -8,7 +8,7 @@ func (p PathString) toString() string {
 	return string(p)
 }
 
-func (p PathString) WithBackslash() PathString {
+func (p PathString) WithTrailingSlash() PathString {
 	if !strings.HasSuffix(p.toString(), "/") {
 		p += "/"
 	}
@@ -16,7 +16,7 @@ func (p PathString) WithBackslash() PathString {
 	return p
 }
 
-func (p PathString) WithoutBackslash() PathString {
+func (p PathString) WithoutTrailingSlash() PathString {
 	if strings.HasSuffix(p.toString(), "/") {
 		return PathString(strings.TrimSuffix(p.toString(), "/"))
 	}
