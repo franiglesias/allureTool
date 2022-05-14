@@ -1,6 +1,7 @@
 package source
 
 import (
+	"allureTool/source/api"
 	"archive/zip"
 	"bytes"
 	"encoding/json"
@@ -19,12 +20,7 @@ type AllureApi struct {
 	baseUrl     string
 	server      string
 	endpoint    string
-	credentials Credentials
-}
-
-type Credentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	credentials api.Credentials
 }
 
 type LoginResponse struct {
@@ -133,7 +129,7 @@ func NewProject(name string) *Project {
 			baseUrl:  "http://allure.lni.core.dev.navify.com",
 			server:   "/allure-api/allure-docker-service",
 			endpoint: "report/export?project_id=" + name,
-			credentials: Credentials{
+			credentials: api.Credentials{
 				Password: "suh2QALJ",
 				Username: "viewer",
 			},
@@ -172,7 +168,7 @@ func downloadProject(project string) {
 		baseUrl:  "http://allure.lni.core.dev.navify.com",
 		server:   "/allure-api/allure-docker-service",
 		endpoint: "report/export?project_id=" + project,
-		credentials: Credentials{
+		credentials: api.Credentials{
 			Password: "suh2QALJ",
 			Username: "viewer",
 		},

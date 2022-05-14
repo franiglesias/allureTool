@@ -1,0 +1,4 @@
+output: "output.csv"
+reports: "allure"
+baseDir: "./data"
+filters: "filters.csv"
