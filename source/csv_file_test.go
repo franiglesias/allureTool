@@ -1,36 +1,37 @@
 package source
 
 import (
-	"os"
+	"github.com/spf13/afero"
 	"testing"
 )
+
+var TestFS = afero.NewMemMapFs()
+
+func TestCsvFileWrite(t *testing.T) {
+	const csvFile = "example.csv"
+
+	NewCsvFileWithFS(csvFile, TestFS).Write(theWantedThing())
+
+	got, _ := afero.ReadFile(TestFS, csvFile)
+
+	want := theExpected()
+
+	if string(got) != string(want) {
+		t.Errorf("Want: %s\nGot:  %s\n", want, got)
+	}
+}
 
 func TestFileReader(t *testing.T) {
 
 	const csvFile = "example.csv"
 
-	cleanExampleFile(t, csvFile)
+	NewCsvFileWithFS(csvFile, TestFS).Write(theWantedThing())
 
-	NewCsvFile(csvFile).Write(theWantedThing())
+	got := NewCsvFileWithFS(csvFile, TestFS).Read()
+	want := theWantedThing()
 
-	t.Run("Can read a CSV file given path", func(t *testing.T) {
-		got := NewCsvFile(csvFile).Read()
-		want := theWantedThing()
+	failIfSomeCellDiverge(t, want, got)
 
-		failIfSomeCellDiverge(t, want, got)
-	})
-
-	cleanExampleFile(t, csvFile)
-}
-
-func cleanExampleFile(t *testing.T, csvFile string) {
-	_, err := os.Stat(csvFile)
-	if err == nil {
-		err := os.Remove(csvFile)
-		if err != nil {
-			t.Errorf("Example file could not be cleaned")
-		}
-	}
 }
 
 func failIfSomeCellDiverge(t *testing.T, want [][]string, got [][]string) {
@@ -49,4 +50,12 @@ func theWantedThing() [][]string {
 		{"line 1 1", "line 1 2"},
 		{"line 2 1", "line 2 2"},
 	}
+}
+
+func theExpected() []byte {
+	var e []byte
+	for _, lines := range theWantedThing() {
+		e = append(e, []byte(lines[0]+","+lines[1]+"\n")...)
+	}
+	return e
 }
