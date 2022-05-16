@@ -17,12 +17,12 @@ func TestLoadSecretConfigFromDotEnv(t *testing.T) {
 	want := Config{
 		output:   "",
 		reports:  "",
-		baseDir:  "",
+		BaseDir:  "",
 		filters:  "",
-		baseUrl:  "https://example.com",
-		server:   "/server/path",
-		password: "secret",
-		username: "username",
+		BaseUrl:  "https://example.com",
+		Server:   "/server/path",
+		Password: "secret",
+		Username: "username",
 	}
 
 	if !reflect.DeepEqual(got, want) {
@@ -42,12 +42,12 @@ func TestLoadConfigFromConfigFile(t *testing.T) {
 	want := Config{
 		output:   "output.csv",
 		reports:  "allure",
-		baseDir:  "./data",
+		BaseDir:  "./data",
 		filters:  "filters.csv",
-		baseUrl:  "",
-		server:   "",
-		password: "",
-		username: "",
+		BaseUrl:  "",
+		Server:   "",
+		Password: "",
+		Username: "",
 	}
 
 	if !reflect.DeepEqual(got, want) {
@@ -69,12 +69,12 @@ func TestLoadAllConfiguration(t *testing.T) {
 	want := Config{
 		output:   "output.csv",
 		reports:  "allure",
-		baseDir:  "./data",
+		BaseDir:  "./data",
 		filters:  "filters.csv",
-		baseUrl:  "https://example.com",
-		server:   "/server/path",
-		password: "secret",
-		username: "username",
+		BaseUrl:  "https://example.com",
+		Server:   "/server/path",
+		Password: "secret",
+		Username: "username",
 	}
 
 	if !reflect.DeepEqual(got, want) {
@@ -89,12 +89,12 @@ func TestOverrideConfigurationWithCLIOptions(t *testing.T) {
 	c := Config{
 		output:   "output.csv",
 		reports:  "allure",
-		baseDir:  "./data",
+		BaseDir:  "./data",
 		filters:  "filters.csv",
-		baseUrl:  "",
-		server:   "",
-		password: "",
-		username: "",
+		BaseUrl:  "",
+		Server:   "",
+		Password: "",
+		Username: "",
 	}
 
 	args := []string{
@@ -107,17 +107,17 @@ func TestOverrideConfigurationWithCLIOptions(t *testing.T) {
 		"-filters",
 		"custom-filters.csv",
 	}
-	got, _ := c.LoadFlags("prog", args)
+	got, _ := c.LoadFlags("program", args)
 
 	want := Config{
 		output:   "custom.csv",
 		reports:  "custom",
-		baseDir:  "./custom",
+		BaseDir:  "./custom",
 		filters:  "custom-filters.csv",
-		baseUrl:  "",
-		server:   "",
-		password: "",
-		username: "",
+		BaseUrl:  "",
+		Server:   "",
+		Password: "",
+		Username: "",
 	}
 
 	if !reflect.DeepEqual(got, want) {

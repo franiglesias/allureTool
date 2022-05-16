@@ -11,12 +11,12 @@ import (
 type Config struct {
 	output   string
 	reports  string
-	baseDir  string
+	BaseDir  string
 	filters  string
-	baseUrl  string
-	server   string
-	password string
-	username string
+	BaseUrl  string
+	Server   string
+	Password string
+	Username string
 }
 
 func GetConfig() Config {
@@ -29,21 +29,21 @@ func GetConfig() Config {
 	return Config{
 		output:  *output,
 		reports: *source,
-		baseDir: strings.TrimSuffix(*baseDir, string(os.PathSeparator)),
+		BaseDir: strings.TrimSuffix(*baseDir, string(os.PathSeparator)),
 		filters: *filters,
 	}
 }
 
 func (c Config) PathToReports() string {
-	return filepath.Join(c.baseDir, c.reports) + string(os.PathSeparator)
+	return filepath.Join(c.BaseDir, c.reports) + string(os.PathSeparator)
 }
 
 func (c Config) OutputFile() string {
-	return filepath.Join(c.baseDir, c.output)
+	return filepath.Join(c.BaseDir, c.output)
 }
 
 func (c Config) FiltersFile() string {
-	return filepath.Join(c.baseDir, c.filters)
+	return filepath.Join(c.BaseDir, c.filters)
 }
 
 func (c Config) LoadEnv(envFile string) (Config, error) {
@@ -58,12 +58,12 @@ func (c Config) LoadEnv(envFile string) (Config, error) {
 	n := Config{
 		output:   c.output,
 		reports:  c.reports,
-		baseDir:  c.baseDir,
+		BaseDir:  c.BaseDir,
 		filters:  c.filters,
-		baseUrl:  viper.Get("ALLURE_BASE_URL").(string),
-		server:   viper.Get("ALLURE_SERVER_PATH").(string),
-		password: viper.Get("ALLURE_PASSWORD").(string),
-		username: viper.Get("ALLURE_USERNAME").(string),
+		BaseUrl:  viper.Get("ALLURE_BASE_URL").(string),
+		Server:   viper.Get("ALLURE_SERVER_PATH").(string),
+		Password: viper.Get("ALLURE_PASSWORD").(string),
+		Username: viper.Get("ALLURE_USERNAME").(string),
 	}
 
 	return n, nil
@@ -80,12 +80,12 @@ func (c Config) LoadConf(confFile string) (Config, error) {
 	n := Config{
 		output:   viper.Get("output").(string),
 		reports:  viper.Get("source").(string),
-		baseDir:  viper.Get("base").(string),
+		BaseDir:  viper.Get("base").(string),
 		filters:  viper.Get("filters").(string),
-		baseUrl:  c.baseUrl,
-		server:   c.server,
-		password: c.password,
-		username: c.username,
+		BaseUrl:  c.BaseUrl,
+		Server:   c.Server,
+		Password: c.Password,
+		Username: c.Username,
 	}
 
 	return n, nil
@@ -98,7 +98,7 @@ func (c Config) LoadFlags(program string, args []string) (Config, error) {
 	f.StringVar(&n.output, "output", "output.csv", "File to generate results report")
 	f.StringVar(&n.reports, "source", "allure", "Folder where report files are stored")
 	f.StringVar(&n.filters, "filters", "filters.csv", "List of labels we want to find")
-	f.StringVar(&n.baseDir, "base", "./data/", "Base folder for working")
+	f.StringVar(&n.BaseDir, "base", "./data/", "Base folder for working")
 
 	err := f.Parse(args)
 
