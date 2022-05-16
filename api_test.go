@@ -1,6 +1,7 @@
-package source
+package main
 
 import (
+	"allureTool/config"
 	"allureTool/source/api"
 	"archive/zip"
 	"fmt"
@@ -12,16 +13,7 @@ import (
 )
 
 func TestApiGetProject(t *testing.T) {
-	projects := []string{
-		"backend",
-		"data-services",
-		"default",
-		"infrastructure",
-		"lni",
-		"lni-anonymization",
-		"system",
-		"system-test",
-	}
+	projects := config.ReadFrom("./../data/projects.csv")
 
 	for _, project := range projects {
 		downloadProject(project)
@@ -29,12 +21,18 @@ func TestApiGetProject(t *testing.T) {
 }
 
 func downloadProject(project string) {
+	c := config.GetConfig()
+	env, err := c.LoadEnv("./.env")
+	if err != nil {
+		return
+	}
+
 	var pClient = api.Client{
-		BaseUrl: "http://allure.lni.core.dev.navify.com",
-		Server:  "allure-api/allure-docker-service",
+		BaseUrl: api.PathString(env.BaseUrl),
+		Server:  api.PathString(env.Server),
 		Credentials: api.Credentials{
-			Username: "viewer",
-			Password: "suh2QALJ",
+			Username: env.Username,
+			Password: env.Password,
 		},
 	}
 
