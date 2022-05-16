@@ -2,6 +2,7 @@ package source
 
 import (
 	"github.com/spf13/afero"
+	"os"
 	"testing"
 )
 
@@ -22,11 +23,12 @@ func TestCsvFileWrite(t *testing.T) {
 }
 
 func TestFileReader(t *testing.T) {
-
 	const csvFile = "example.csv"
 
-	NewCsvFileWithFS(csvFile, TestFS).Write(theWantedThing())
-
+	err := afero.WriteFile(TestFS, csvFile, theExpected(), os.ModePerm)
+	if err != nil {
+		return
+	}
 	got := NewCsvFileWithFS(csvFile, TestFS).Read()
 	want := theWantedThing()
 

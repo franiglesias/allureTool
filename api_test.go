@@ -5,6 +5,7 @@ import (
 	"allureTool/source/api"
 	"archive/zip"
 	"fmt"
+	"github.com/spf13/afero"
 	"io"
 	"os"
 	"path/filepath"
@@ -13,7 +14,13 @@ import (
 )
 
 func TestApiGetProject(t *testing.T) {
-	projects := config.ReadFrom("./../data/projects.csv")
+
+	projectsFile := config.DataFile{
+		Path: "./../data/projects.csv",
+		Fs:   afero.NewOsFs(),
+	}
+
+	projects := projectsFile.ReadLines()
 
 	for _, project := range projects {
 		downloadProject(project)

@@ -4,6 +4,7 @@ import (
 	. "allureTool/config"
 	. "allureTool/report"
 	. "allureTool/source"
+	"github.com/spf13/afero"
 )
 
 func main() {
@@ -28,5 +29,7 @@ func aggregatedDataIn(folder string) [][]string {
 }
 
 func filtersIn(filtersFile string) []string {
-	return ReadFrom(filtersFile)
+	file := NewDataFile(filtersFile, afero.NewOsFs())
+
+	return file.ReadLines()
 }

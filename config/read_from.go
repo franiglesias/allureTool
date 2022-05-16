@@ -1,11 +1,26 @@
 package config
 
-import "allureTool/source"
+import (
+	"github.com/spf13/afero"
+	"strings"
+)
 
-func ReadFrom(file string) []string {
-	var flat []string
-	for _, line := range source.NewCsvFile(file).Read() {
-		flat = append(flat, line[0])
+type DataFile struct {
+	Path string
+	Fs   afero.Fs
+}
+
+func NewDataFile(file string, fs afero.Fs) DataFile {
+	return DataFile{
+		Path: file,
+		Fs:   fs,
 	}
-	return flat
+}
+
+func (df DataFile) ReadLines() []string {
+	bytes, err := afero.ReadFile(df.Fs, df.Path)
+	if err != nil {
+		return nil
+	}
+	return strings.Split(string(bytes), "\n")
 }
