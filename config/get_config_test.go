@@ -144,7 +144,8 @@ func setFakeEnvFileForTesting(file string, t *testing.T) error {
 	viper.AddConfigPath(".")
 	err := viper.WriteConfigAs(file)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Logf(err.Error())
+		t.Fail()
 	}
 	return err
 }
@@ -161,7 +162,8 @@ func setFakeConfigFileForTesting(file string, t *testing.T) error {
 	viper.AddConfigPath(".")
 	err := viper.WriteConfigAs(file)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Log(err.Error())
+		t.Fail()
 	}
 	return err
 }

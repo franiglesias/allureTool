@@ -11,12 +11,14 @@ func TestBuildReport(t *testing.T) {
 		got := MakeEmptyReport().BuildWith(rawData())
 
 		if len(got.Tests) != 3 {
-			t.Errorf("Got %d lines instead of %d", len(got.Tests), 3)
+			t.Logf("Got %d lines instead of %d", len(got.Tests), 3)
+			t.Fail()
 		}
 
 		for i, line := range got.Tests {
 			if line != want[i] {
-				t.Errorf("Line %d failed to be converted", i+1)
+				t.Logf("Line %d failed to be converted", i+1)
+				t.Fail()
 			}
 		}
 	})
@@ -28,13 +30,15 @@ func TestBuildReport(t *testing.T) {
 		got := report.ToRaw()
 
 		if len(got) != 3 {
-			t.Errorf("Got %d lines instead of %d", len(got), 3)
+			t.Logf("Got %d lines instead of %d", len(got), 3)
+			t.Fail()
 		}
 
 		for i, line := range got {
 			for j, cell := range line {
 				if cell != want[i][j] {
-					t.Errorf("Line %d failed to be converted", i+1)
+					t.Logf("Line %d failed to be converted", i+1)
+					t.Fail()
 				}
 			}
 		}
@@ -49,7 +53,8 @@ func TestBuildReport(t *testing.T) {
 		filtered := report.FilterWith(filters)
 
 		if !strings.HasPrefix(filtered.Tests[0].epic, "US-454") {
-			t.Errorf("This line should not be here: %s, expected: %s", filtered.Tests[0].epic, "US-454")
+			t.Logf("This line should not be here: %s, expected: %s", filtered.Tests[0].epic, "US-454")
+			t.Fail()
 		}
 	})
 
@@ -62,7 +67,8 @@ func TestBuildReport(t *testing.T) {
 		filtered := report.FilterWith(filters)
 
 		if !strings.HasPrefix(filtered.Tests[0].feature, "US-35") {
-			t.Errorf("This line should not be here: %s, expected: %s", filtered.Tests[0].feature, "US-35")
+			t.Logf("This line should not be here: %s, expected: %s", filtered.Tests[0].feature, "US-35")
+			t.Fail()
 		}
 	})
 
@@ -75,7 +81,8 @@ func TestBuildReport(t *testing.T) {
 		filtered := report.FilterWith(filters)
 
 		if !strings.HasPrefix(filtered.Tests[0].story, "US-435") {
-			t.Errorf("This line should not be here: %s, expected: %s", filtered.Tests[0].story, "US-435")
+			t.Logf("This line should not be here: %s, expected: %s", filtered.Tests[0].story, "US-435")
+			t.Fail()
 		}
 	})
 }

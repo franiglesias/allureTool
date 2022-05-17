@@ -32,7 +32,8 @@ func TestApiClientUriShould(t *testing.T) {
 			got := apiClient.Uri()
 
 			if got != test.want {
-				t.Errorf("Expected %s, got %s", test.want, got)
+				t.Logf("Expected %s, got %s", test.want, got)
+				t.Fail()
 			}
 		})
 	}
@@ -68,19 +69,22 @@ func TestApiClientShouldLogin(t *testing.T) {
 	}
 
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Logf(err.Error())
+		t.Fail()
 	}
 
 	if got.Name != want.Name {
-		t.Errorf("Expected %s, got %s", want.Name, got.Name)
+		t.Logf("Expected %s, got %s", want.Name, got.Name)
+		t.Fail()
 	}
 	if got.Value != want.Value {
-		t.Errorf("Expected %s, got %s", want.Value, got.Value)
+		t.Logf("Expected %s, got %s", want.Value, got.Value)
+		t.Fail()
 	}
 	if got.MaxAge != want.MaxAge {
-		t.Errorf("Expected %d, got %d", want.MaxAge, got.MaxAge)
+		t.Logf("Expected %d, got %d", want.MaxAge, got.MaxAge)
+		t.Fail()
 	}
-
 }
 
 func TestApiClientShouldHandleFailedLogin(t *testing.T) {
@@ -100,7 +104,8 @@ func TestApiClientShouldHandleFailedLogin(t *testing.T) {
 	_, err := apiClient.Login()
 
 	if err == nil {
-		t.Errorf("It should have failed because invalid login, but was ok")
+		t.Logf("It should have failed because invalid login, but was ok")
+		t.Fail()
 	}
 }
 
@@ -121,11 +126,13 @@ func TestApiShouldHandleProjectFile(t *testing.T) {
 	contents, err := apiClient.Download("project", cookie)
 
 	if err != nil {
-		t.Errorf("It should have found something")
+		t.Logf("It should have found something")
+		t.Fail()
 	}
 
 	if string(contents) != payload.String() {
-		t.Errorf("Expected info, got %s", contents)
+		t.Logf("Expected info, got %s", contents)
+		t.Fail()
 	}
 }
 

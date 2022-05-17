@@ -18,7 +18,8 @@ func TestCsvFileWrite(t *testing.T) {
 	want := theExpected()
 
 	if string(got) != string(want) {
-		t.Errorf("Want: %s\nGot:  %s\n", want, got)
+		t.Logf("Want: %s\nGot:  %s\n", want, got)
+		t.Fail()
 	}
 }
 
@@ -40,7 +41,8 @@ func failIfSomeCellDiverge(t *testing.T, want [][]string, got [][]string) {
 	for i, row := range want {
 		for j := range row {
 			if got[i][j] != want[i][j] {
-				t.Errorf("Not the expected data at (%d, %d). Wanted: %s, got: %s", i, j, want[i][j], got[i][j])
+				t.Logf("Not the expected data at (%d, %d). Wanted: %s, got: %s", i, j, want[i][j], got[i][j])
+				t.Fail()
 			}
 		}
 	}
