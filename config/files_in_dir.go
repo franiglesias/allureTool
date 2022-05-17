@@ -1,26 +1,37 @@
 package config
 
 import (
-	"fmt"
-	"io/ioutil"
+	"github.com/spf13/afero"
 	"log"
 	"strings"
 )
 
-func FilesInDir(dir string) []string {
+type Directory struct {
+	path string
+	fs   afero.Fs
+}
+
+func (d Directory) Files() []string {
 	var fPaths []string
-	files, err := ioutil.ReadDir(dir)
+	files, err := afero.ReadDir(d.fs, d.path)
 	if err != nil {
-		log.Fatal("Failed: "+dir, err)
+		log.Fatal("Failed: "+d.path, err)
 	}
 
 	for _, file := range files {
 		if strings.HasPrefix(file.Name(), ".") {
 			continue
 		}
-		fmt.Println(file.Name())
 		fPaths = append(fPaths, file.Name())
 	}
-
 	return fPaths
+}
+
+func FilesInDir(dir string) []string {
+	directory := Directory{
+		path: dir,
+		fs:   afero.NewOsFs(),
+	}
+
+	return directory.Files()
 }
