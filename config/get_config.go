@@ -2,12 +2,16 @@ package config
 
 import (
 	"flag"
+	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 	"os"
 	"path/filepath"
 )
 
 type Config struct {
+	Env      string
+	Conf     string
+	Fs       afero.Fs
 	output   string
 	reports  string
 	BaseDir  string
@@ -18,12 +22,11 @@ type Config struct {
 	Username string
 }
 
-func GetConfig() Config {
-	c := Config{}
-	c, _ = c.LoadConf("config.yml")
-	c, _ = c.LoadEnv(".test.env")
+func (c Config) Get() Config {
+	env, _ := c.LoadConf()
+	cfg, _ := env.LoadEnv()
 
-	return c
+	return cfg
 }
 
 func (c Config) PathToReports() string {
@@ -38,9 +41,9 @@ func (c Config) FiltersFile() string {
 	return filepath.Join(c.BaseDir, c.filters)
 }
 
-func (c Config) LoadEnv(envFile string) (Config, error) {
-	viper.SetConfigName(envFile)
-	viper.AddConfigPath(".")
+func (c Config) LoadEnv() (Config, error) {
+	viper.SetFs(c.Fs)
+	viper.SetConfigFile(c.Env)
 	viper.SetConfigType("env")
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -48,6 +51,9 @@ func (c Config) LoadEnv(envFile string) (Config, error) {
 	}
 
 	n := Config{
+		Env:      c.Env,
+		Conf:     c.Conf,
+		Fs:       c.Fs,
 		output:   c.output,
 		reports:  c.reports,
 		BaseDir:  c.BaseDir,
@@ -61,15 +67,18 @@ func (c Config) LoadEnv(envFile string) (Config, error) {
 	return n, nil
 }
 
-func (c Config) LoadConf(confFile string) (Config, error) {
-	viper.SetConfigName(confFile)
-	viper.AddConfigPath(".")
+func (c Config) LoadConf() (Config, error) {
+	viper.SetFs(c.Fs)
+	viper.SetConfigFile(c.Conf)
 	err := viper.ReadInConfig()
 	if err != nil {
 		return Config{}, err
 	}
 
 	n := Config{
+		Env:      c.Env,
+		Conf:     c.Conf,
+		Fs:       c.Fs,
 		output:   viper.Get("output").(string),
 		reports:  viper.Get("source").(string),
 		BaseDir:  viper.Get("base").(string),

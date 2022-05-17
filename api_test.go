@@ -14,32 +14,34 @@ import (
 )
 
 func TestApiGetProject(t *testing.T) {
+	c := config.Config{
+		Env:  ".env",
+		Conf: "config.yml",
+		Fs:   afero.NewOsFs(),
+	}
+
+	conf := c.Get()
 
 	projectsFile := config.DataFile{
-		Path: "./../data/projects.csv",
-		Fs:   afero.NewOsFs(),
+		Path: "data/projects.csv",
+		Fs:   conf.Fs,
 	}
 
 	projects := projectsFile.ReadLines()
 
 	for _, project := range projects {
-		downloadProject(project)
+		downloadProject(project, conf)
 	}
 }
 
-func downloadProject(project string) {
-	c := config.GetConfig()
-	env, err := c.LoadEnv("./.env")
-	if err != nil {
-		return
-	}
+func downloadProject(project string, c config.Config) {
 
 	var pClient = api.Client{
-		BaseUrl: api.PathString(env.BaseUrl),
-		Server:  api.PathString(env.Server),
+		BaseUrl: api.PathString(c.BaseUrl),
+		Server:  api.PathString(c.Server),
 		Credentials: api.Credentials{
-			Username: env.Username,
-			Password: env.Password,
+			Username: c.Username,
+			Password: c.Password,
 		},
 	}
 
@@ -51,7 +53,7 @@ func downloadProject(project string) {
 
 	tempZip := ("/tmp/") + project + ".zip"
 	writeZipFile(bytes, tempZip)
-	_ = unzipSource(project, tempZip, "./../data/allure", "/tmp")
+	_ = unzipSource(project, tempZip, "data/allure", "/tmp")
 	_ = os.Remove(tempZip)
 }
 
@@ -130,26 +132,8 @@ func unzipSource(project, source, destination, temporal string) error {
 }
 
 func writeZipFile(bytes []byte, name string) {
-	f, err := os.Create(name)
+	err := os.WriteFile(name, bytes, os.ModeAppend)
 	if err != nil {
-		_ = fmt.Errorf(err.Error())
-	}
-	defer f.Close()
-
-	_, err = f.Write(bytes)
-	err = f.Sync()
-	if err != nil {
-		return
-	}
-
-	reader, err := zip.OpenReader(name)
-	if err != nil {
-		_ = fmt.Errorf(err.Error())
-	}
-
-	defer reader.Close()
-
-	if len(bytes) == 0 {
-		_ = fmt.Errorf("bad things happend")
+		fmt.Errorf("bad things happended")
 	}
 }

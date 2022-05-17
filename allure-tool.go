@@ -8,7 +8,9 @@ import (
 )
 
 func main() {
-	c := GetConfig()
+	c := getConfig()
+
+	// download all projects
 
 	NewCsvFile(c.OutputFile()).
 		Write(
@@ -17,6 +19,16 @@ func main() {
 				FilterWith(filtersIn(c.FiltersFile())).
 				ToRaw(),
 		)
+}
+
+func getConfig() Config {
+	c := Config{
+		Env:  ".env",
+		Conf: "config.yml",
+		Fs:   afero.NewOsFs(),
+	}
+
+	return c.Get()
 }
 
 func aggregatedDataIn(folder string) [][]string {
