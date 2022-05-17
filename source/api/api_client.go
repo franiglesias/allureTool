@@ -8,7 +8,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
+	"os"
 )
+
+type Credentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
 
 type Client struct {
 	BaseUrl     PathString
@@ -21,7 +27,7 @@ func (api Client) Uri() PathString {
 }
 
 func (api Client) Endpoint(endpoint string) string {
-	return string(api.Uri()) + "/" + endpoint
+	return string(api.Uri()) + string(os.PathSeparator) + endpoint
 }
 
 func (api Client) Login() (*http.Cookie, error) {
@@ -39,7 +45,7 @@ func (api Client) Login() (*http.Cookie, error) {
 	)
 
 	if e != nil {
-		fmt.Errorf("Something happended")
+		fmt.Errorf("something happended")
 	}
 	defer response.Body.Close()
 
@@ -99,9 +105,4 @@ func makeHttpClient() (*http.Client, error) {
 		Jar: jar,
 	}
 	return client, nil
-}
-
-type Credentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
 }
