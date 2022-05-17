@@ -61,10 +61,7 @@ func TestLoadAllConfiguration(t *testing.T) {
 	_ = setFakeEnvFileForTesting(".test.env", t)
 	_ = setFakeConfigFileForTesting("config.yml", t)
 
-	c := Config{}
-
-	c, _ = c.LoadConf("config.yml")
-	got, _ := c.LoadEnv(".test.env")
+	got := GetConfig()
 
 	want := Config{
 		output:   "output.csv",

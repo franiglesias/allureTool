@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/viper"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 type Config struct {
@@ -20,18 +19,11 @@ type Config struct {
 }
 
 func GetConfig() Config {
-	output := flag.String("output", "output.csv", "File to generate results report")
-	source := flag.String("source", "allure", "Folder where report files are stored")
-	filters := flag.String("filters", "filters.csv", "List of labels we want to find")
-	baseDir := flag.String("base", "./data/", "Base folder for working")
-	flag.Parse()
+	c := Config{}
+	c, _ = c.LoadConf("config.yml")
+	c, _ = c.LoadEnv(".test.env")
 
-	return Config{
-		output:  *output,
-		reports: *source,
-		BaseDir: strings.TrimSuffix(*baseDir, string(os.PathSeparator)),
-		filters: *filters,
-	}
+	return c
 }
 
 func (c Config) PathToReports() string {
