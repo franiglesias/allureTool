@@ -1,6 +1,7 @@
 package api
 
 import (
+	"allureTool/config"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -105,4 +106,16 @@ func makeHttpClient() (*http.Client, error) {
 		Jar: jar,
 	}
 	return client, nil
+}
+
+func MakeClient(c config.Config) Client {
+
+	return Client{
+		BaseUrl: PathString(c.BaseUrl),
+		Server:  PathString(c.Server),
+		Credentials: Credentials{
+			Username: c.Username,
+			Password: c.Password,
+		},
+	}
 }

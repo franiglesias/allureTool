@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/spf13/afero"
+	"os"
 	"strings"
 )
 
@@ -23,4 +24,8 @@ func (df DataFile) ReadLines() []string {
 		return nil
 	}
 	return strings.Split(string(bytes), "\n")
+}
+
+func (df DataFile) WriteBytes(bytes []byte) error {
+	return afero.WriteFile(df.Fs, df.Path, bytes, os.ModePerm)
 }

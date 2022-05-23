@@ -54,7 +54,8 @@ func TestLoadConfigFromConfigFile(t *testing.T) {
 		output:   "output.csv",
 		reports:  "allure",
 		BaseDir:  "./data",
-		filters:  "filters.csv",
+		filters:  "filters-old.csv",
+		projects: "projects.csv",
 		BaseUrl:  "",
 		Server:   "",
 		Password: "",
@@ -86,7 +87,8 @@ func TestLoadAllConfiguration(t *testing.T) {
 		output:   "output.csv",
 		reports:  "allure",
 		BaseDir:  "./data",
-		filters:  "filters.csv",
+		filters:  "filters-old.csv",
+		projects: "projects.csv",
 		BaseUrl:  "https://example.com",
 		Server:   "/server/path",
 		Password: "secret",
@@ -104,7 +106,7 @@ func TestOverrideConfigurationWithCLIOptions(t *testing.T) {
 		output:   "output.csv",
 		reports:  "allure",
 		BaseDir:  "./data",
-		filters:  "filters.csv",
+		filters:  "filters-old.csv",
 		BaseUrl:  "",
 		Server:   "",
 		Password: "",
@@ -119,7 +121,7 @@ func TestOverrideConfigurationWithCLIOptions(t *testing.T) {
 		"-base",
 		"./custom",
 		"-filters",
-		"custom-filters.csv",
+		"custom-filters-old.csv",
 	}
 	got, _ := c.LoadFlags("program", args)
 
@@ -127,7 +129,7 @@ func TestOverrideConfigurationWithCLIOptions(t *testing.T) {
 		output:   "custom.csv",
 		reports:  "custom",
 		BaseDir:  "./custom",
-		filters:  "custom-filters.csv",
+		filters:  "custom-filters-old.csv",
 		BaseUrl:  "",
 		Server:   "",
 		Password: "",
@@ -153,9 +155,10 @@ func setFakeEnvFileForTesting(file string, fs afero.Fs) error {
 func setFakeConfigFileForTesting(file string, fs afero.Fs) error {
 	data := []byte(
 		"base: ./data\n" +
-			"filters: filters.csv\n" +
+			"filters: filters-old.csv\n" +
 			"output: output.csv\n" +
-			"source: allure\n",
+			"source: allure\n" +
+			"projects: projects.csv\n",
 	)
 
 	return afero.WriteFile(fs, file, data, os.ModeAppend)

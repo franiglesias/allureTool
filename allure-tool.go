@@ -2,6 +2,7 @@ package main
 
 import (
 	. "allureTool/config"
+	"allureTool/project"
 	. "allureTool/report"
 	. "allureTool/source"
 	"github.com/spf13/afero"
@@ -10,7 +11,7 @@ import (
 func main() {
 	c := getConfig()
 
-	// download all projects
+	_ = project.GetProjects(c)
 
 	NewCsvFile(c.OutputFile()).
 		Write(

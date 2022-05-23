@@ -34,7 +34,6 @@ func TestFileReader(t *testing.T) {
 	want := theWantedThing()
 
 	failIfSomeCellDiverge(t, want, got)
-
 }
 
 func failIfSomeCellDiverge(t *testing.T, want [][]string, got [][]string) {
