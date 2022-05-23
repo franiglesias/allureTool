@@ -3,3 +3,4 @@
 data
 /allure-tool
 /.env
+.DS_Store
