@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/spf13/afero"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -33,6 +34,29 @@ func TestReadFrom(t *testing.T) {
 			t.Logf("Lines doesn't match at line %d. Expected %s, got %s", i+1, line, got[i])
 			t.Fail()
 		}
+	}
+}
+
+func TestDuplicateTo(t *testing.T) {
+	fs := afero.NewMemMapFs()
+
+	exampleFile, err := simulateFileInFS(fs)
+	if err != nil {
+		return
+	}
+
+	dataFile := DataFile{
+		Path: exampleFile,
+		Fs:   fs,
+	}
+
+	duplicated, err := dataFile.DuplicateTo("another/path/copy.data")
+
+	got := duplicated.ReadLines()
+	want := dataFile.ReadLines()
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Copy was wrong.")
 	}
 }
 

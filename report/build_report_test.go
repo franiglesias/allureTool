@@ -85,6 +85,20 @@ func TestBuildReport(t *testing.T) {
 			t.Fail()
 		}
 	})
+
+	t.Run("Empty filter is ignored", func(t *testing.T) {
+		report := MakeReport(expectedTests())
+		filters := []string{
+			"",
+		}
+
+		filtered := report.FilterWith(filters)
+
+		if len(filtered.Tests) != 0 {
+			t.Logf("Empty filter should not accept any story")
+			t.Fail()
+		}
+	})
 }
 
 func expectedTests() []Test {

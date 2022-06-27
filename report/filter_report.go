@@ -7,6 +7,9 @@ func (report Report) FilterWith(filters []string) Report {
 
 	for _, test := range report.Tests {
 		for _, filter := range filters {
+			if filter == "" {
+				continue
+			}
 			if test.IsRelatedTo(filter) {
 				filtered = filtered.AddTest(test)
 			}

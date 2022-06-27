@@ -3,7 +3,8 @@ package project
 import "allureTool/config"
 
 func GetProjects(conf config.Config) error {
-	projects := config.NewDataFile(conf.ProjectsFile(), conf.Fs).ReadLines()
+	projectsFile := conf.ProjectsFile()
+	projects := config.NewDataFile(projectsFile, conf.Fs).ReadLines()
 
 	for _, name := range projects {
 		p := Project{

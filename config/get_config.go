@@ -13,10 +13,10 @@ type Config struct {
 	Conf     string
 	Fs       afero.Fs
 	output   string
-	reports  string
-	projects string
+	Reports  string
+	Projects string
 	BaseDir  string
-	filters  string
+	Filters  string
 	BaseUrl  string
 	Server   string
 	Password string
@@ -31,7 +31,7 @@ func (c Config) Get() Config {
 }
 
 func (c Config) PathToReports() string {
-	return filepath.Join(c.BaseDir, c.reports) + string(os.PathSeparator)
+	return filepath.Join(c.BaseDir, c.Reports) + string(os.PathSeparator)
 }
 
 func (c Config) OutputFile() string {
@@ -39,11 +39,11 @@ func (c Config) OutputFile() string {
 }
 
 func (c Config) FiltersFile() string {
-	return filepath.Join(c.BaseDir, c.filters)
+	return filepath.Join(c.BaseDir, c.Filters)
 }
 
 func (c Config) ProjectsFile() string {
-	return filepath.Join(c.BaseDir, c.projects)
+	return filepath.Join(c.BaseDir, c.Projects)
 }
 
 func (c Config) LoadEnv() (Config, error) {
@@ -60,10 +60,10 @@ func (c Config) LoadEnv() (Config, error) {
 		Conf:     c.Conf,
 		Fs:       c.Fs,
 		output:   c.output,
-		reports:  c.reports,
+		Reports:  c.Reports,
 		BaseDir:  c.BaseDir,
-		filters:  c.filters,
-		projects: c.projects,
+		Filters:  c.Filters,
+		Projects: c.Projects,
 		BaseUrl:  viper.Get("ALLURE_BASE_URL").(string),
 		Server:   viper.Get("ALLURE_SERVER_PATH").(string),
 		Password: viper.Get("ALLURE_PASSWORD").(string),
@@ -86,10 +86,10 @@ func (c Config) LoadConf() (Config, error) {
 		Conf:     c.Conf,
 		Fs:       c.Fs,
 		output:   viper.Get("output").(string),
-		reports:  viper.Get("source").(string),
+		Reports:  viper.Get("source").(string),
 		BaseDir:  viper.Get("base").(string),
-		filters:  viper.Get("filters").(string),
-		projects: viper.Get("projects").(string),
+		Filters:  viper.Get("filters").(string),
+		Projects: viper.Get("projects").(string),
 		BaseUrl:  c.BaseUrl,
 		Server:   c.Server,
 		Password: c.Password,
@@ -104,8 +104,8 @@ func (c Config) LoadFlags(program string, args []string) (Config, error) {
 
 	n := c
 	f.StringVar(&n.output, "output", "output.csv", "File to generate results report")
-	f.StringVar(&n.reports, "source", "allure", "Folder where report files are stored")
-	f.StringVar(&n.filters, "filters", "filters-old.csv", "List of labels we want to find")
+	f.StringVar(&n.Reports, "source", "allure", "Folder where report files are stored")
+	f.StringVar(&n.Filters, "filters", "filters-old.csv", "List of labels we want to find")
 	f.StringVar(&n.BaseDir, "base", "./data/", "Base folder for working")
 	f.StringVar(&n.BaseDir, "projects", "projects.csv", "List of projects to check")
 	err := f.Parse(args)

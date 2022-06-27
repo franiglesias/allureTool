@@ -19,13 +19,28 @@ func NewDataFile(file string, fs afero.Fs) DataFile {
 }
 
 func (df DataFile) ReadLines() []string {
+	bytes, _ := df.ReadBytes()
+	return strings.Split(string(bytes), "\n")
+}
+
+func (df DataFile) ReadBytes() ([]byte, error) {
 	bytes, err := afero.ReadFile(df.Fs, df.Path)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return strings.Split(string(bytes), "\n")
+	return bytes, nil
 }
 
 func (df DataFile) WriteBytes(bytes []byte) error {
 	return afero.WriteFile(df.Fs, df.Path, bytes, os.ModePerm)
+}
+
+func (df DataFile) DuplicateTo(path string) (DataFile, error) {
+	dest := NewDataFile(path, df.Fs)
+	contents, err := df.ReadBytes()
+	if err != nil {
+		return dest, err
+	}
+
+	return dest, dest.WriteBytes(contents)
 }
