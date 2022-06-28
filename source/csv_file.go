@@ -17,7 +17,6 @@ func NewCsvFile(path string) *CsvFile {
 
 func NewCsvFileWithFS(path string, fs afero.Fs) *CsvFile {
 	return &CsvFile{path: path, fs: fs}
-
 }
 
 func (csvFile CsvFile) Read() [][]string {

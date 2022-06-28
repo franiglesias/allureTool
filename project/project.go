@@ -3,6 +3,7 @@ package project
 import (
 	"allureTool/config"
 	"allureTool/source/api"
+	"allureTool/source/zip"
 )
 
 type Project struct {
@@ -41,7 +42,7 @@ func (p Project) downloadZip(api api.Client) error {
 }
 
 func (p Project) extractData() error {
-	return api.UnzipSource(p.Name, p.TmpZip(), p.Config.PathToReports(), p.Config.Fs)
+	return zip.UnzipSource(p.Name, p.TmpZip(), p.Config.PathToReports(), p.Config.Fs)
 }
 
 func (p Project) cleanAfter() error {

@@ -1,4 +1,4 @@
-package api
+package zip
 
 import (
 	"archive/zip"
@@ -11,10 +11,7 @@ import (
 )
 
 func UnzipSource(project, source, destination string, fs afero.Fs) error {
-	prefix := "allure-report"
-	extension := ".csv"
-	destinationFile := destination + project + extension
-	behaviorsFile := prefix + "/data/behaviors" + extension
+	target := NewTarget(project, destination)
 
 	reader, err := zip.OpenReader(source)
 	if err != nil {
@@ -23,29 +20,38 @@ func UnzipSource(project, source, destination string, fs afero.Fs) error {
 	defer reader.Close()
 
 	temporal, err := filepath.Abs("/tmp")
+
 	if err != nil {
 		return err
 	}
 
 	for _, f := range reader.File {
-		if f.Name != behaviorsFile {
+		if target.IsNotNamed(f.Name) {
 			continue
 		}
 
-		err := unzipFile(f, temporal, fs)
-		if err != nil {
-			return err
-		}
-		err = fs.Rename(temporal+string(os.PathSeparator)+behaviorsFile, destinationFile)
-		if err != nil {
-			return err
-		}
-		err = fs.RemoveAll(temporal + string(os.PathSeparator) + prefix)
+		err := obtainFile(f, temporal, fs, target)
 		if err != nil {
 			return err
 		}
 	}
 
+	return nil
+}
+
+func obtainFile(f *zip.File, temporal string, fs afero.Fs, target Target) error {
+	err := unzipFile(f, temporal, fs)
+	if err != nil {
+		return err
+	}
+	err = target.MoveToDestinationInFs(fs)
+	if err != nil {
+		return err
+	}
+	err = target.RemoveFromFs(fs)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -62,7 +68,8 @@ func unzipFile(f *zip.File, destination string, fs afero.Fs) error {
 		return nil
 	}
 
-	if err := fs.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
+	err := fs.MkdirAll(filepath.Dir(filePath), os.ModePerm)
+	if err != nil {
 		return err
 	}
 

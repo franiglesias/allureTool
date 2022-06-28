@@ -1,4 +1,4 @@
-package api
+package zip
 
 import (
 	"archive/zip"
