@@ -45,7 +45,7 @@ func (t Target) temporalFolder() string {
 }
 
 func (t Target) IsNotNamed(name string) bool {
-	return name != t.destinationFile()
+	return name != t.behaviorsFile()
 }
 
 func (t Target) MoveToDestinationInFs(fs afero.Fs) error {
