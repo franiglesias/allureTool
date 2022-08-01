@@ -12,7 +12,7 @@ func MakeEmptyMemoryRepository() MemoryRepository {
 	}
 }
 
-func (r *MemoryRepository) Retrieve(project string) domain.ExecutionData {
+func (r MemoryRepository) Retrieve(project string) domain.ExecutionData {
 	return r.Data[project]
 }
 

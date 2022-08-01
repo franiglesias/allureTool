@@ -15,11 +15,13 @@ func MakeObtainExecutionData(repository for_getting_data.ProjectRepository) Obta
 	}
 }
 
-func (oed ObtainExecutionData) FromProjects(projects []string) (domain.ExecutionData, error) {
+func (oed ObtainExecutionData) FromProjects(projects []string, filters []string) (domain.ExecutionData, error) {
 	data := domain.MakeEmptyExecutionData()
 	for _, project := range projects {
 		for _, test := range oed.Repository.Retrieve(project).Tests {
-			data.Append(test)
+			if test.Referencing(filters) {
+				data.Append(test)
+			}
 		}
 	}
 

@@ -24,7 +24,7 @@ type GenerateReport struct {
 }
 
 func (g GenerateReport) Execute(request GenerateReportRequest) (GenerateReportResponse, error) {
-	testExecutionData, err := g.obtain.FromProjects(request.projects)
+	testExecutionData, err := g.obtain.FromProjects(request.projects, request.filters)
 
 	if err != nil {
 		return GenerateReportResponse{}, err

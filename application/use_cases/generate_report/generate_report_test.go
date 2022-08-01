@@ -46,6 +46,37 @@ func TestGenerateSuccessfulReportAllTrackedAreTested(t *testing.T) {
 	}
 }
 
+func TestGenerateSuccessfulReportFiltering(t *testing.T) {
+	stories := []story{
+		{epic: "EP-001", feature: "FT-001", story: "US-001"},
+		{epic: "EP-001", feature: "FT-002", story: "US-002"},
+		{epic: "EP-002", feature: "FT-004", story: "US-003"},
+	}
+
+	repository := givenARepositoryWithData(stories)
+
+	generateReport := GenerateReport{
+		obtain:    obtain_execution_data.MakeObtainExecutionData(repository),
+		analyze:   analyze_execution.AnalyzeExecution{},
+		summarize: summarize_data.Summarize{},
+	}
+
+	got, err := generateReport.Execute(givenRequestForFilters("US-002"))
+
+	if err != nil {
+		t.Errorf("Execute raised an error %v", err.Error())
+	}
+
+	filtered := []story{
+		{epic: "EP-001", feature: "FT-002", story: "US-002"},
+	}
+	want := expectedReport(filtered)
+
+	if !reflect.DeepEqual(want, got) {
+		t.Errorf("Expected %#v, got %#v", want, got)
+	}
+}
+
 func givenRequestForFilters(filters ...string) GenerateReportRequest {
 	projects := []string{
 		projectName,

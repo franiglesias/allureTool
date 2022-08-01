@@ -2,7 +2,7 @@ package obtain_execution_data
 
 import (
 	"allureTool/application/adapters/for_getting_data/memory_repository"
-	domain2 "allureTool/application/domain"
+	"allureTool/application/domain"
 	"reflect"
 	"testing"
 )
@@ -11,16 +11,16 @@ func TestObtainExecutionDataFromEmptyProject(t *testing.T) {
 	projects := []string{"myProject"}
 
 	emptyRepository := memory_repository.MemoryRepository{
-		Data: map[string]domain2.ExecutionData{"myProject": {}},
+		Data: map[string]domain.ExecutionData{"myProject": {}},
 	}
 
-	want := domain2.ExecutionData{
-		Tests: []domain2.Test{},
+	want := domain.ExecutionData{
+		Tests: []domain.Test{},
 	}
 
 	gather := MakeObtainExecutionData(emptyRepository)
 
-	got, err := gather.FromProjects(projects)
+	got, err := gather.FromProjects(projects, []string{})
 	if err != nil {
 		t.Errorf("ObtainFromProjects() error = %v", err)
 		return
@@ -34,9 +34,9 @@ func TestObtainExecutionDataFromOneProject(t *testing.T) {
 	projects := []string{"myProject"}
 
 	repository := memory_repository.MemoryRepository{
-		Data: map[string]domain2.ExecutionData{
+		Data: map[string]domain.ExecutionData{
 			"myProject": {
-				Tests: []domain2.Test{
+				Tests: []domain.Test{
 					{
 						Epic:    "epic",
 						Feature: "feature",
@@ -52,8 +52,8 @@ func TestObtainExecutionDataFromOneProject(t *testing.T) {
 		},
 	}
 
-	want := domain2.ExecutionData{
-		Tests: []domain2.Test{
+	want := domain.ExecutionData{
+		Tests: []domain.Test{
 			{
 				Epic:    "epic",
 				Feature: "feature",
@@ -69,7 +69,7 @@ func TestObtainExecutionDataFromOneProject(t *testing.T) {
 
 	gather := MakeObtainExecutionData(repository)
 
-	got, err := gather.FromProjects(projects)
+	got, err := gather.FromProjects(projects, []string{})
 	if err != nil {
 		t.Errorf("ObtainFromProjects() error = %v", err)
 		return
@@ -86,9 +86,9 @@ func TestObtainExecutionDataFromSeveralProjects(t *testing.T) {
 	}
 
 	repository := memory_repository.MemoryRepository{
-		Data: map[string]domain2.ExecutionData{
+		Data: map[string]domain.ExecutionData{
 			"myProject": {
-				Tests: []domain2.Test{
+				Tests: []domain.Test{
 					{
 						Epic:    "epic",
 						Feature: "feature",
@@ -102,7 +102,7 @@ func TestObtainExecutionDataFromSeveralProjects(t *testing.T) {
 				},
 			},
 			"otherProject": {
-				Tests: []domain2.Test{
+				Tests: []domain.Test{
 					{
 						Epic:    "EP-001",
 						Feature: "FE-002",
@@ -118,8 +118,8 @@ func TestObtainExecutionDataFromSeveralProjects(t *testing.T) {
 		},
 	}
 
-	want := domain2.ExecutionData{
-		Tests: []domain2.Test{
+	want := domain.ExecutionData{
+		Tests: []domain.Test{
 			{
 				Epic:    "epic",
 				Feature: "feature",
@@ -144,7 +144,94 @@ func TestObtainExecutionDataFromSeveralProjects(t *testing.T) {
 	}
 
 	gather := MakeObtainExecutionData(repository)
-	got, err := gather.FromProjects(projects)
+	got, err := gather.FromProjects(projects, []string{})
+	if err != nil {
+		t.Errorf("ObtainFromProjects() error = %v", err)
+		return
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("ObtainFromProjects() got = %v, want %v", got, want)
+	}
+}
+
+func TestObtainExecutionDataFiltering(t *testing.T) {
+	projects := []string{"myProject"}
+
+	repository := memory_repository.MemoryRepository{
+		Data: map[string]domain.ExecutionData{
+			"myProject": {
+				Tests: []domain.Test{
+					{
+						Epic:    "epic",
+						Feature: "feature",
+						Story:   "US-001",
+						Failed:  0,
+						Broken:  0,
+						Passed:  1,
+						Skipped: 0,
+						Unknown: 0,
+					},
+				},
+			},
+		},
+	}
+
+	want := domain.ExecutionData{
+		Tests: []domain.Test{
+			{
+				Epic:    "epic",
+				Feature: "feature",
+				Story:   "US-001",
+				Failed:  0,
+				Broken:  0,
+				Passed:  1,
+				Skipped: 0,
+				Unknown: 0,
+			},
+		},
+	}
+
+	gather := MakeObtainExecutionData(repository)
+
+	got, err := gather.FromProjects(projects, []string{"US-001"})
+	if err != nil {
+		t.Errorf("ObtainFromProjects() error = %v", err)
+		return
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("ObtainFromProjects() got = %v, want %v", got, want)
+	}
+}
+
+func TestObtainExecutionDataFilteringNotMatching(t *testing.T) {
+	projects := []string{"myProject"}
+
+	repository := memory_repository.MemoryRepository{
+		Data: map[string]domain.ExecutionData{
+			"myProject": {
+				Tests: []domain.Test{
+					{
+						Epic:    "epic",
+						Feature: "feature",
+						Story:   "US-001",
+						Failed:  0,
+						Broken:  0,
+						Passed:  1,
+						Skipped: 0,
+						Unknown: 0,
+					},
+				},
+			},
+		},
+	}
+
+	want := domain.ExecutionData{
+		Tests: []domain.Test{},
+	}
+
+	gather := MakeObtainExecutionData(repository)
+
+	got, err := gather.FromProjects(projects, []string{"US-002"})
 	if err != nil {
 		t.Errorf("ObtainFromProjects() error = %v", err)
 		return
