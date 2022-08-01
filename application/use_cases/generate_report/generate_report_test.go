@@ -18,26 +18,19 @@ type story struct {
 	story   string
 }
 
+var FirstUserStory = story{epic: "EP-001", feature: "FT-001", story: "US-001"}
+var SecondUserStory = story{epic: "EP-001", feature: "FT-002", story: "US-002"}
+var ThirdUserStory = story{epic: "EP-002", feature: "FT-004", story: "US-003"}
+
 func TestGenerateSuccessfulReportAllTrackedAreTested(t *testing.T) {
-	stories := []story{
-		{epic: "EP-001", feature: "FT-001", story: "US-001"},
-		{epic: "EP-001", feature: "FT-002", story: "US-002"},
-		{epic: "EP-002", feature: "FT-004", story: "US-003"},
-	}
+	stories := []story{FirstUserStory, SecondUserStory, ThirdUserStory}
 
-	repository := givenARepositoryWithData(stories)
+	generateReport := buildGenerateReportWithStories(stories)
 
-	generateReport := GenerateReport{
-		obtain:    obtain_execution_data.MakeObtainExecutionData(repository),
-		analyze:   analyze_execution.AnalyzeExecution{},
-		summarize: summarize_data.Summarize{},
-	}
-
-	got, err := generateReport.Execute(givenRequestForFilters("US-001", "US-002", "US-003"))
-
-	if err != nil {
-		t.Errorf("Execute raised an error %v", err.Error())
-	}
+	got, _ := generateReport.Execute(GenerateReportRequest{
+		filters:  []string{"US-001", "US-002", "US-003"},
+		projects: []string{projectName},
+	})
 
 	want := expectedReport(stories)
 
@@ -47,44 +40,29 @@ func TestGenerateSuccessfulReportAllTrackedAreTested(t *testing.T) {
 }
 
 func TestGenerateSuccessfulReportFiltering(t *testing.T) {
-	stories := []story{
-		{epic: "EP-001", feature: "FT-001", story: "US-001"},
-		{epic: "EP-001", feature: "FT-002", story: "US-002"},
-		{epic: "EP-002", feature: "FT-004", story: "US-003"},
-	}
+	stories := []story{FirstUserStory, SecondUserStory, ThirdUserStory}
 
-	repository := givenARepositoryWithData(stories)
+	generateReport := buildGenerateReportWithStories(stories)
 
-	generateReport := GenerateReport{
-		obtain:    obtain_execution_data.MakeObtainExecutionData(repository),
-		analyze:   analyze_execution.AnalyzeExecution{},
-		summarize: summarize_data.Summarize{},
-	}
+	got, _ := generateReport.Execute(GenerateReportRequest{
+		filters:  []string{"US-002"},
+		projects: []string{projectName},
+	})
 
-	got, err := generateReport.Execute(givenRequestForFilters("US-002"))
-
-	if err != nil {
-		t.Errorf("Execute raised an error %v", err.Error())
-	}
-
-	filtered := []story{
-		{epic: "EP-001", feature: "FT-002", story: "US-002"},
-	}
-	want := expectedReport(filtered)
+	want := expectedReport([]story{SecondUserStory})
 
 	if !reflect.DeepEqual(want, got) {
 		t.Errorf("Expected %#v, got %#v", want, got)
 	}
 }
 
-func givenRequestForFilters(filters ...string) GenerateReportRequest {
-	projects := []string{
-		projectName,
-	}
+func buildGenerateReportWithStories(stories []story) GenerateReport {
+	repository := givenARepositoryWithData(stories)
 
-	return GenerateReportRequest{
-		filters:  filters,
-		projects: projects,
+	return GenerateReport{
+		obtain:    obtain_execution_data.MakeObtainExecutionData(repository),
+		analyze:   analyze_execution.AnalyzeExecution{},
+		summarize: summarize_data.Summarize{},
 	}
 }
 

@@ -33,7 +33,7 @@ func (g GenerateReport) Execute(request GenerateReportRequest) (GenerateReportRe
 	details := g.analyze.ExecutionData(testExecutionData)
 
 	return GenerateReportResponse{
-		summary: g.summarize.Details(details),
 		details: details,
+		summary: g.summarize.Details(details),
 	}, nil
 }
