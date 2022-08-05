@@ -37,16 +37,7 @@ func TestObtainExecutionDataFromOneProject(t *testing.T) {
 		Data: map[string]domain.ExecutionData{
 			"myProject": {
 				Tests: []domain.Test{
-					{
-						Epic:    "epic",
-						Feature: "feature",
-						Story:   "US-001",
-						Failed:  0,
-						Broken:  0,
-						Passed:  1,
-						Skipped: 0,
-						Unknown: 0,
-					},
+					MakePassedTest("epic", "feature", "US-001"),
 				},
 			},
 		},
@@ -54,16 +45,7 @@ func TestObtainExecutionDataFromOneProject(t *testing.T) {
 
 	want := domain.ExecutionData{
 		Tests: []domain.Test{
-			{
-				Epic:    "epic",
-				Feature: "feature",
-				Story:   "US-001",
-				Failed:  0,
-				Broken:  0,
-				Passed:  1,
-				Skipped: 0,
-				Unknown: 0,
-			},
+			MakePassedTest("epic", "feature", "US-001"),
 		},
 	}
 
@@ -89,30 +71,12 @@ func TestObtainExecutionDataFromSeveralProjects(t *testing.T) {
 		Data: map[string]domain.ExecutionData{
 			"myProject": {
 				Tests: []domain.Test{
-					{
-						Epic:    "epic",
-						Feature: "feature",
-						Story:   "US-001",
-						Failed:  0,
-						Broken:  0,
-						Passed:  1,
-						Skipped: 0,
-						Unknown: 0,
-					},
+					MakePassedTest("epic", "feature", "US-001"),
 				},
 			},
 			"otherProject": {
 				Tests: []domain.Test{
-					{
-						Epic:    "EP-001",
-						Feature: "FE-002",
-						Story:   "US-003",
-						Failed:  0,
-						Broken:  0,
-						Passed:  3,
-						Skipped: 0,
-						Unknown: 0,
-					},
+					MakePassedTest("EP-001", "FE-002", "US-003"),
 				},
 			},
 		},
@@ -120,35 +84,14 @@ func TestObtainExecutionDataFromSeveralProjects(t *testing.T) {
 
 	want := domain.ExecutionData{
 		Tests: []domain.Test{
-			{
-				Epic:    "epic",
-				Feature: "feature",
-				Story:   "US-001",
-				Failed:  0,
-				Broken:  0,
-				Passed:  1,
-				Skipped: 0,
-				Unknown: 0,
-			},
-			{
-				Epic:    "EP-001",
-				Feature: "FE-002",
-				Story:   "US-003",
-				Failed:  0,
-				Broken:  0,
-				Passed:  3,
-				Skipped: 0,
-				Unknown: 0,
-			},
+			MakePassedTest("epic", "feature", "US-001"),
+			MakePassedTest("EP-001", "FE-002", "US-003"),
 		},
 	}
 
 	gather := MakeObtainExecutionData(repository)
-	got, err := gather.FromProjects(projects, []string{})
-	if err != nil {
-		t.Errorf("ObtainFromProjects() error = %v", err)
-		return
-	}
+	got, _ := gather.FromProjects(projects, []string{})
+
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("ObtainFromProjects() got = %v, want %v", got, want)
 	}
@@ -161,16 +104,7 @@ func TestObtainExecutionDataFiltering(t *testing.T) {
 		Data: map[string]domain.ExecutionData{
 			"myProject": {
 				Tests: []domain.Test{
-					{
-						Epic:    "epic",
-						Feature: "feature",
-						Story:   "US-001",
-						Failed:  0,
-						Broken:  0,
-						Passed:  1,
-						Skipped: 0,
-						Unknown: 0,
-					},
+					MakePassedTest("epic", "feature", "US-001"),
 				},
 			},
 		},
@@ -178,16 +112,7 @@ func TestObtainExecutionDataFiltering(t *testing.T) {
 
 	want := domain.ExecutionData{
 		Tests: []domain.Test{
-			{
-				Epic:    "epic",
-				Feature: "feature",
-				Story:   "US-001",
-				Failed:  0,
-				Broken:  0,
-				Passed:  1,
-				Skipped: 0,
-				Unknown: 0,
-			},
+			MakePassedTest("epic", "feature", "US-001"),
 		},
 	}
 
@@ -210,16 +135,7 @@ func TestObtainExecutionDataFilteringNotMatching(t *testing.T) {
 		Data: map[string]domain.ExecutionData{
 			"myProject": {
 				Tests: []domain.Test{
-					{
-						Epic:    "epic",
-						Feature: "feature",
-						Story:   "US-001",
-						Failed:  0,
-						Broken:  0,
-						Passed:  1,
-						Skipped: 0,
-						Unknown: 0,
-					},
+					MakePassedTest("epic", "feature", "US-001"),
 				},
 			},
 		},
@@ -238,5 +154,18 @@ func TestObtainExecutionDataFilteringNotMatching(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("ObtainFromProjects() got = %v, want %v", got, want)
+	}
+}
+
+func MakePassedTest(epic, feature, story string) domain.Test {
+	return domain.Test{
+		Epic:    epic,
+		Feature: feature,
+		Story:   story,
+		Failed:  0,
+		Broken:  0,
+		Passed:  1,
+		Skipped: 0,
+		Unknown: 0,
 	}
 }
