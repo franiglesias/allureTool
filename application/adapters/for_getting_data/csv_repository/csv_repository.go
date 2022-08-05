@@ -43,9 +43,7 @@ func convertRawDataToTests(data [][]string) []domain.Test {
 			continue
 		}
 
-		test := MakeTestFromRawData(datum)
-
-		foundTests = append(foundTests, test)
+		foundTests = append(foundTests, MakeTestFromRawData(datum))
 	}
 	return foundTests
 }
