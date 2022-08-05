@@ -20,16 +20,7 @@ func TestAnalyzeTest_ExecutionData(t *testing.T) {
 			args: args{
 				data: domain.ExecutionData{
 					Tests: []domain.Test{
-						{
-							Epic:    "EP-001",
-							Feature: "FT-001",
-							Story:   "US-001",
-							Failed:  0,
-							Broken:  0,
-							Passed:  1,
-							Skipped: 0,
-							Unknown: 0,
-						},
+						domain.MakePassedTest("EP-001", "FT-001", "US-001"),
 					},
 				},
 			},

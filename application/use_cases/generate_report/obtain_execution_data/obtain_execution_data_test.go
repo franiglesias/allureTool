@@ -37,7 +37,7 @@ func TestObtainExecutionDataFromOneProject(t *testing.T) {
 		Data: map[string]domain.ExecutionData{
 			"myProject": {
 				Tests: []domain.Test{
-					MakePassedTest("epic", "feature", "US-001"),
+					domain.MakePassedTest("epic", "feature", "US-001"),
 				},
 			},
 		},
@@ -45,7 +45,7 @@ func TestObtainExecutionDataFromOneProject(t *testing.T) {
 
 	want := domain.ExecutionData{
 		Tests: []domain.Test{
-			MakePassedTest("epic", "feature", "US-001"),
+			domain.MakePassedTest("epic", "feature", "US-001"),
 		},
 	}
 
@@ -71,12 +71,12 @@ func TestObtainExecutionDataFromSeveralProjects(t *testing.T) {
 		Data: map[string]domain.ExecutionData{
 			"myProject": {
 				Tests: []domain.Test{
-					MakePassedTest("epic", "feature", "US-001"),
+					domain.MakePassedTest("epic", "feature", "US-001"),
 				},
 			},
 			"otherProject": {
 				Tests: []domain.Test{
-					MakePassedTest("EP-001", "FE-002", "US-003"),
+					domain.MakePassedTest("EP-001", "FE-002", "US-003"),
 				},
 			},
 		},
@@ -84,8 +84,8 @@ func TestObtainExecutionDataFromSeveralProjects(t *testing.T) {
 
 	want := domain.ExecutionData{
 		Tests: []domain.Test{
-			MakePassedTest("epic", "feature", "US-001"),
-			MakePassedTest("EP-001", "FE-002", "US-003"),
+			domain.MakePassedTest("epic", "feature", "US-001"),
+			domain.MakePassedTest("EP-001", "FE-002", "US-003"),
 		},
 	}
 
@@ -104,7 +104,7 @@ func TestObtainExecutionDataFiltering(t *testing.T) {
 		Data: map[string]domain.ExecutionData{
 			"myProject": {
 				Tests: []domain.Test{
-					MakePassedTest("epic", "feature", "US-001"),
+					domain.MakePassedTest("epic", "feature", "US-001"),
 				},
 			},
 		},
@@ -112,7 +112,7 @@ func TestObtainExecutionDataFiltering(t *testing.T) {
 
 	want := domain.ExecutionData{
 		Tests: []domain.Test{
-			MakePassedTest("epic", "feature", "US-001"),
+			domain.MakePassedTest("epic", "feature", "US-001"),
 		},
 	}
 
@@ -135,7 +135,7 @@ func TestObtainExecutionDataFilteringNotMatching(t *testing.T) {
 		Data: map[string]domain.ExecutionData{
 			"myProject": {
 				Tests: []domain.Test{
-					MakePassedTest("epic", "feature", "US-001"),
+					domain.MakePassedTest("epic", "feature", "US-001"),
 				},
 			},
 		},
@@ -154,18 +154,5 @@ func TestObtainExecutionDataFilteringNotMatching(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("ObtainFromProjects() got = %v, want %v", got, want)
-	}
-}
-
-func MakePassedTest(epic, feature, story string) domain.Test {
-	return domain.Test{
-		Epic:    epic,
-		Feature: feature,
-		Story:   story,
-		Failed:  0,
-		Broken:  0,
-		Passed:  1,
-		Skipped: 0,
-		Unknown: 0,
 	}
 }

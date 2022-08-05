@@ -69,7 +69,7 @@ func buildGenerateReportWithStories(stories []story) GenerateReport {
 func givenARepositoryWithData(stories []story) *memory_repository.MemoryRepository {
 	repository := memory_repository.MakeEmptyMemoryRepository()
 	for _, s := range stories {
-		repository.AddTest(projectName, makePassingTest(s))
+		repository.AddTest(projectName, domain.MakePassedTest(s.epic, s.feature, s.story))
 	}
 
 	return &repository
@@ -92,19 +92,6 @@ func expectedReport(stories []story) GenerateReportResponse {
 	return GenerateReportResponse{
 		summary: summary,
 		details: details,
-	}
-}
-
-func makePassingTest(s story) domain.Test {
-	return domain.Test{
-		Epic:    s.epic,
-		Feature: s.feature,
-		Story:   s.story,
-		Failed:  0,
-		Broken:  0,
-		Passed:  1,
-		Skipped: 0,
-		Unknown: 0,
 	}
 }
 

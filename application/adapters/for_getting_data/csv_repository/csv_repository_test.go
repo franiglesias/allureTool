@@ -30,16 +30,7 @@ func TestObtainDataFromCSVFilesRepository(t *testing.T) {
 		t.Errorf("No data added to repository. Wanted: %v, got: %v", 1, got.Tests)
 	}
 
-	want := domain.Test{
-		Epic:    "EP-002",
-		Feature: "FT-003",
-		Story:   "US-005",
-		Failed:  0,
-		Broken:  0,
-		Passed:  1,
-		Skipped: 0,
-		Unknown: 0,
-	}
+	want := domain.MakePassedTest("EP-002", "FT-003", "US-005")
 
 	if !reflect.DeepEqual(got.Tests[0], want) {
 		t.Errorf("Read or processing error. Wanted: %v, got: %v", want, got.Tests[0])

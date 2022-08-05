@@ -8,16 +8,7 @@ import (
 func TestAddingTestsToMemoryRepository(t *testing.T) {
 	r := MakeEmptyMemoryRepository()
 
-	test := domain.Test{
-		Epic:    "EP-002",
-		Feature: "FT-003",
-		Story:   "US-005",
-		Failed:  0,
-		Broken:  0,
-		Passed:  1,
-		Skipped: 0,
-		Unknown: 0,
-	}
+	test := domain.MakePassedTest("EP-002", "FT-003", "US-005")
 
 	r.AddTest("myProject", test)
 	got := r.Retrieve("myProject")

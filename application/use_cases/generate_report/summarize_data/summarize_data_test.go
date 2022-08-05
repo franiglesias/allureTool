@@ -1,7 +1,7 @@
 package summarize_data
 
 import (
-	domain2 "allureTool/application/domain"
+	"allureTool/application/domain"
 	"reflect"
 	"testing"
 )
@@ -9,15 +9,15 @@ import (
 func TestSummarizeData(t *testing.T) {
 	tests := []struct {
 		name    string
-		details domain2.ReportDetails
-		want    domain2.ReportSummary
+		details domain.ReportDetails
+		want    domain.ReportSummary
 	}{
-		{name: "All success", details: buildDetailsSuccess(), want: domain2.ReportSummary{
+		{name: "All success", details: buildDetailsSuccess(), want: domain.ReportSummary{
 			Tracked: 3,
 			Found:   3,
 			Pct:     100.0,
 		}},
-		{name: "All failed", details: buildDetailsNoneTested(), want: domain2.ReportSummary{
+		{name: "All failed", details: buildDetailsNoneTested(), want: domain.ReportSummary{
 			Tracked: 3,
 			Found:   0,
 			Pct:     0.0,
@@ -35,9 +35,9 @@ func TestSummarizeData(t *testing.T) {
 	}
 }
 
-func buildDetailsSuccess() domain2.ReportDetails {
-	return domain2.ReportDetails{
-		Lines: []domain2.DetailsLine{
+func buildDetailsSuccess() domain.ReportDetails {
+	return domain.ReportDetails{
+		Lines: []domain.DetailsLine{
 			{
 				Project: "myproject",
 				Symbol:  "US-001",
@@ -66,9 +66,9 @@ func buildDetailsSuccess() domain2.ReportDetails {
 	}
 }
 
-func buildDetailsNoneTested() domain2.ReportDetails {
-	return domain2.ReportDetails{
-		Lines: []domain2.DetailsLine{
+func buildDetailsNoneTested() domain.ReportDetails {
+	return domain.ReportDetails{
+		Lines: []domain.DetailsLine{
 			{
 				Project: "myproject",
 				Symbol:  "US-001",
