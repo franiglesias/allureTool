@@ -1,6 +1,7 @@
 /allureTool.iml
 .idea
-data
+/data
 /allure-tool
 /.env
 .DS_Store
+/bin
