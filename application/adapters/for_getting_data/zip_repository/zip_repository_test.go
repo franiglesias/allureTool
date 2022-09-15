@@ -1,18 +1,15 @@
-package csv_repository
+package zip_repository
 
 import (
 	"allureTool/application/domain"
+	"archive/zip"
+	"encoding/csv"
 	"github.com/spf13/afero"
 	"reflect"
 	"testing"
 )
 
-func TestObtainDataFromCSVFilesRepository(t *testing.T) {
-	project := ProjectFile{
-		Project: "myProject",
-		Path:    "path/behaviors.csv",
-	}
-
+func TestObtainDataFromAllureZipArchive(t *testing.T) {
 	data := [][]string{
 		{"epic", "feature", "story", "failed", "broken", "passed", "skipped", "unknown"},
 		{"EP-002", "FT-003", "US-005", "0", "0", "1", "0", "0"},
@@ -20,9 +17,11 @@ func TestObtainDataFromCSVFilesRepository(t *testing.T) {
 
 	fs := afero.NewMemMapFs()
 
-	populateFileWithExampleData(fs, "path/behaviors.csv", data)
+	makeSampleZipArchive(fs, "myProject.zip", data)
 
-	r := MakeCSVRepositoryFromFiles(fs, project)
+	zipArchive := MakeZipArchive(fs, "myProject.zip")
+
+	r := MakeZipRepositoryFromArchive(zipArchive)
 
 	got := r.Retrieve("myProject")
 
@@ -37,11 +36,16 @@ func TestObtainDataFromCSVFilesRepository(t *testing.T) {
 	}
 }
 
-func populateFileWithExampleData(fs afero.Fs, pathToFile string, data [][]string) {
-	file := CSVFile{
-		Fs:   fs,
-		Path: pathToFile,
-	}
+func makeSampleZipArchive(fs afero.Fs, file string, data [][]string) {
+	archive, _ := fs.Create(file)
+	defer archive.Close()
 
-	_ = file.Write(data)
+	writer := zip.NewWriter(archive)
+
+	zipWriter, _ := writer.Create("data/behaviors.csv")
+	csvWriter := csv.NewWriter(zipWriter)
+	csvWriter.WriteAll(data)
+	csvWriter.Flush()
+	writer.Flush()
+	writer.Close()
 }

@@ -1,53 +1,80 @@
 package main
 
 import (
-	"allureTool/auto"
-	. "allureTool/config"
-	"allureTool/project"
-	. "allureTool/report"
-	. "allureTool/source"
+	"allureTool/application/adapters/for_getting_data/csv_repository"
+	"allureTool/application/adapters/for_getting_data/zip_repository"
+	"allureTool/application/use_cases/generate_report"
+	"allureTool/application/use_cases/generate_report/analyze_execution"
+	"allureTool/application/use_cases/generate_report/obtain_execution_data"
+	"allureTool/application/use_cases/generate_report/summarize_data"
+	"flag"
+	"fmt"
 	"github.com/spf13/afero"
-	"time"
+	"log"
+	"os"
 )
 
 func main() {
-	c := getConfig()
 
-	_ = project.GetProjects(*c)
+	generateReport := MakeGenerateReport()
 
-	NewCsvFile(c.OutputFile()).
-		Write(
-			MakeEmptyReport().
-				BuildWith(aggregatedDataIn(c.PathToReports())).
-				FilterWith(filtersIn(c.FiltersFile())).
-				ToRaw(),
-		)
-}
+	result, err := generateReport.Execute(generate_report.GenerateReportRequest{
+		Filters:  []string{""},
+		Projects: []string{"backend"},
+	})
 
-func getConfig() *Config {
-	fs := afero.NewOsFs()
-	c := Config{
-		Env:  ".env",
-		Conf: "config.yml",
-		Fs:   fs,
+	if err != nil {
+		log.Fatalf("Something failed. %#v\n", err)
 	}
 
-	subfolder := time.Now().Format("2006-01-02-15-04-05")
-	config, _ := auto.SelfProject(fs, subfolder, c.Get())
-	return config
+	fmt.Printf("%#v\n", result)
 }
 
-func aggregatedDataIn(folder string) [][]string {
-	files := FilesInDir(folder)
-	var aggregated [][]string
-	for _, file := range files {
-		aggregated = append(aggregated, NewCsvFile(folder+file).Read()...)
+func MakeGenerateReport() generate_report.GenerateReport {
+	zipCmd := flag.NewFlagSet("zip", flag.ExitOnError)
+	zipArchive := zipCmd.String("archive", "", "Zip archive containing report")
+	zipProject := zipCmd.String("project", "anon", "Project")
+
+	csvCmd := flag.NewFlagSet("csv", flag.ExitOnError)
+	csvFile := csvCmd.String("file", "", "File with tests data")
+	csvProject := csvCmd.String("project", "anon", "Project")
+
+	switch os.Args[1] {
+	case "zip":
+		zipCmd.Parse(os.Args[2:])
+		return makeZip(*zipArchive, *zipProject)
+	default:
+		csvCmd.Parse(os.Args[2:])
+		return makeCsv(*csvFile, *csvProject)
 	}
-	return aggregated
 }
 
-func filtersIn(filtersFile string) []string {
-	file := NewDataFile(filtersFile, afero.NewOsFs())
+func makeZip(zipFile, project string) generate_report.GenerateReport {
+	archive := zip_repository.ZipArchive{
+		Fs:   afero.NewOsFs(),
+		Path: zipFile,
+		Tmp:  "/tmp",
+	}
 
-	return file.ReadLines()
+	repository := zip_repository.MakeZipRepositoryFromArchive(archive)
+
+	return generate_report.GenerateReport{
+		Obtain:    obtain_execution_data.MakeObtainExecutionData(repository),
+		Analyze:   analyze_execution.AnalyzeExecution{},
+		Summarize: summarize_data.Summarize{},
+	}
+}
+
+func makeCsv(csvFile, project string) generate_report.GenerateReport {
+	repository := csv_repository.MakeCSVRepositoryForProjectAndFile(
+		afero.NewOsFs(),
+		project,
+		csvFile,
+	)
+
+	return generate_report.GenerateReport{
+		Obtain:    obtain_execution_data.MakeObtainExecutionData(repository),
+		Analyze:   analyze_execution.AnalyzeExecution{},
+		Summarize: summarize_data.Summarize{},
+	}
 }

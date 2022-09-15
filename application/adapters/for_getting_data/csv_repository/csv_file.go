@@ -31,7 +31,10 @@ func (f CSVFile) Write(data [][]string) error {
 }
 
 func (f CSVFile) Read() [][]string {
-	source, _ := f.Fs.Open(f.Path)
+	source, err := f.Fs.Open(f.Path)
+	if err != nil {
+		log.Fatalf("Cannot read file %s, %#v", f.Path, err)
+	}
 	defer func(source afero.File) {
 		err := source.Close()
 		if err != nil {

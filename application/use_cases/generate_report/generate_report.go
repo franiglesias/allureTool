@@ -8,32 +8,32 @@ import (
 )
 
 type GenerateReportRequest struct {
-	filters  []string
-	projects []string
+	Filters  []string
+	Projects []string
 }
 
 type GenerateReportResponse struct {
-	summary domain.ReportSummary
-	details domain.ReportDetails
+	Summary domain.ReportSummary
+	Details domain.ReportDetails
 }
 
 type GenerateReport struct {
-	obtain    obtain_execution_data.ObtainExecutionData
-	analyze   analyze_execution.AnalyzeExecution
-	summarize summarize_data.Summarize
+	Obtain    obtain_execution_data.ObtainExecutionData
+	Analyze   analyze_execution.AnalyzeExecution
+	Summarize summarize_data.Summarize
 }
 
 func (g GenerateReport) Execute(request GenerateReportRequest) (GenerateReportResponse, error) {
-	testExecutionData, err := g.obtain.FromProjects(request.projects, request.filters)
+	testExecutionData, err := g.Obtain.FromProjects(request.Projects, request.Filters)
 
 	if err != nil {
 		return GenerateReportResponse{}, err
 	}
 
-	details := g.analyze.ExecutionData(testExecutionData)
+	details := g.Analyze.ExecutionData(testExecutionData)
 
 	return GenerateReportResponse{
-		details: details,
-		summary: g.summarize.Details(details),
+		Details: details,
+		Summary: g.Summarize.Details(details),
 	}, nil
 }
